@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
 import requests
-
+from django.core import serializers
 from login.cache import del_cache_by_id, get_user_by_id
 
 
@@ -120,9 +120,12 @@ def current(request: HttpRequest):
     if user:
         info = {
             "username": user.get_username(),
+            "firstname":user.first_name,
+             "lastname":user.last_name,
             "fullname": user.get_full_name(),
             "email": user.email,
             "last_login": user.last_login.timestamp(),
+            "join_date":user.date_joined.timestamp(),
             "is_superuser": user.is_superuser,
         }
         return responeSucceed(info)
@@ -157,3 +160,20 @@ def getUserInfo(request: HttpRequest):
         }
         return responeSucceed(info)
     return responeFailed()
+
+
+@require_POST
+
+def updateCurrent(request: HttpRequest):
+    raw = request.body.decode()
+    user = json.loads(raw)
+    
+    if user['username'] == request.user.username:
+        dbUser = User.objects.get(username= user['username'])
+        dbUser.email = user['email']
+        dbUser.first_name = user['firstname']
+        dbUser.last_name = user['lastname']
+        dbUser.save()
+        del_cache_by_id(dbUser.pk)
+        return HttpResponse("",status = 204)
+    return HttpResponse("",status = 401)
