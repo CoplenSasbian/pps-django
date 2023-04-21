@@ -395,7 +395,7 @@ class TrainingModel(PredictModel):
         
         
         di = pd.DataFrame()
-        di['bin'] = group_data.groups.keys()
+        di['bin'] = group_data.groups.keys()    
         di['woe'] = result['woe'].values
         di['iv'] = result['iv'].values
         return di
@@ -525,9 +525,7 @@ class TrainingModel(PredictModel):
         predictY = [v for i,v in predictY ]
         fpr, tpr, thresholds = roc_curve(Y, predictY)
         roc_auc = auc(fpr,tpr)
-        fpr = list(fpr)
-        tpr = list(tpr)
-        data = {'fpr':fpr,'tpr':tpr,'roc_auc':roc_auc}
+        data = {'fpr':list(fpr),'tpr':list(tpr),'roc_auc':roc_auc}
         self.setRocData(data)
         return data
     

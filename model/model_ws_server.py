@@ -18,6 +18,7 @@ class ModelServer(WebsocketConsumer):
         
         
     def disconnect(self, close_code):
+        #断开连接时销毁模型对象
         self.session.delete('currenntModel')
         
     def setData(self,data:dict):
@@ -31,6 +32,7 @@ class ModelServer(WebsocketConsumer):
             file =  pd.read_excel(io.BytesIO(bytes))
         model = TrainingModel()
         model.loadData(file,inor)
+        #将对象放入session
         self.session.setdefault('currenntModel',model)
         return self.Succeed('')
         

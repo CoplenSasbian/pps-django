@@ -4,6 +4,7 @@ from django.http import HttpRequest, HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
+import pytz
 import requests
 from django.core import serializers
 from login.cache import del_cache_by_id, get_user_by_id
@@ -106,11 +107,11 @@ def refine(request: HttpRequest):
         return responeFailed("当前用户未不存在！")
     user.first_name = firstname
     user.last_name = lastname
-    user.save(user.pk)
-    del_cache_by_id(user)
+    user.save()
+    del_cache_by_id(user.pk)
     return responeSucceed("center")
 
-
+beijing_tz = pytz.timezone('Asia/Shanghai')
 @require_GET
 def current(request: HttpRequest):
     id = request.user.id
@@ -124,8 +125,8 @@ def current(request: HttpRequest):
              "lastname":user.last_name,
             "fullname": user.get_full_name(),
             "email": user.email,
-            "last_login": user.last_login.timestamp(),
-            "join_date":user.date_joined.timestamp(),
+            "last_login": user.last_login.astimezone(beijing_tz).strftime('%Y-%m-%dT%H:%M:%S.%f'),
+            "join_date":user.date_joined.astimezone(beijing_tz).strftime('%Y-%m-%dT%H:%M:%S.%f'),
             "is_superuser": user.is_superuser,
         }
         return responeSucceed(info)
