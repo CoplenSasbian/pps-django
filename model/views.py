@@ -31,3 +31,14 @@ def detail(request: HttpRequest):
     data = serializers.serialize("json", [data],fields=jsonFiled)
     return HttpResponse(data,content_type='application/json')
 
+def setScore(request: HttpRequest):
+    ao:dict = json.loads(request.body.decode())
+    id = ao.get('modelId')
+    baseScore = ao.get('baseScore')
+    pdo = ao.get('pdo')
+    
+    model = Model.objects.get(id = id)
+    model.pdo_score = pdo
+    model.base_score = baseScore
+    model.save()
+    return HttpResponse(None,status = 204)
