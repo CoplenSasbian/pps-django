@@ -12,5 +12,6 @@ urlpatterns =[
     path('hm',views.hw),
     path('out',views.logout_),
     path('getinfo',views.getUserInfo),
-    path('updatecurrent',views.updateCurrent)
+    path('updatecurrent',views.updateCurrent),
+    path('bingimage',views.bingImage)
 ]

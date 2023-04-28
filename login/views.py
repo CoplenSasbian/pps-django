@@ -178,3 +178,9 @@ def updateCurrent(request: HttpRequest):
         del_cache_by_id(dbUser.pk)
         return HttpResponse("",status = 204)
     return HttpResponse("",status = 401)
+
+@require_GET
+def bingImage(request: HttpRequest):
+    resp = requests.get('https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1')
+    
+    return HttpResponse(resp.text,content_type = 'application/json')
